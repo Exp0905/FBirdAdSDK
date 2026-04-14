@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'FBirdAdSDK'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'FBirdAdSDK 是一个广告集成 SDK'
   s.description      = 'FBirdAdSDK 提供了开屏、插屏、信息流和激励视频等广告类型的集成能力'
   s.homepage         = 'https://sdk.dmpdsp.com/'
@@ -12,4 +12,7 @@ Pod::Spec.new do |s|
   
   # 使用二进制 XCFramework
   s.vendored_frameworks = 'XCFramework/FBirdAdSDK.xcframework'
+  
+  # 包含资源文件
+  s.resources = 'XCFramework/Resources/FBirdAdSDKBundle.bundle'
 end
