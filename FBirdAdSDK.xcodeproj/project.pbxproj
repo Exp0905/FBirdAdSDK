@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9A1D3A9D2DFFEE64004D00F9 /* CuskyAdSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A1D3A942DFFEE64004D00F9 /* CuskyAdSDK.framework */; };
+		9A1D3B1D2DFFF58D004D00F9 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A1D3B1B2DFFF58D004D00F9 /* Media.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,25 +24,30 @@
 /* Begin PBXFileReference section */
 		9A1D3A942DFFEE64004D00F9 /* CuskyAdSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CuskyAdSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A1D3A9C2DFFEE64004D00F9 /* CuskyAdSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CuskyAdSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A1D3B172DFFF48A004D00F9 /* CuskyAdSDKBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CuskyAdSDKBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A1D3B1B2DFFF58D004D00F9 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		9A1D3AA42DFFEE64004D00F9 /* Exceptions for "CuskyAdSDK" folder in "CuskyAdSDK" target */ = {
+		9A1D3B0E2DFFF005004D00F9 /* Exceptions for "FBirdAdSDK" folder in "CuskyAdSDK" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
-				CuskyAdSDK.h,
+				FBirdAdSDK.h,
+				FBirdAdSDKAdResponseModel.h,
+				FBirdAdSDKManager.h,
+				FBirdAdSDKView.h,
 			);
 			target = 9A1D3A932DFFEE64004D00F9 /* CuskyAdSDK */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9A1D3A962DFFEE64004D00F9 /* CuskyAdSDK */ = {
+		9A1D3A962DFFEE64004D00F9 /* FBirdAdSDK */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				9A1D3AA42DFFEE64004D00F9 /* Exceptions for "CuskyAdSDK" folder in "CuskyAdSDK" target */,
+				9A1D3B0E2DFFF005004D00F9 /* Exceptions for "FBirdAdSDK" folder in "CuskyAdSDK" target */,
 			);
-			path = CuskyAdSDK;
+			path = FBirdAdSDK;
 			sourceTree = "<group>";
 		};
 		9A1D3AA02DFFEE64004D00F9 /* CuskyAdSDKTests */ = {
@@ -67,13 +73,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9A1D3B142DFFF48A004D00F9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		9A1D3A8A2DFFEE63004D00F9 = {
 			isa = PBXGroup;
 			children = (
-				9A1D3A962DFFEE64004D00F9 /* CuskyAdSDK */,
+				9A1D3B1B2DFFF58D004D00F9 /* Media.xcassets */,
+				9A1D3A962DFFEE64004D00F9 /* FBirdAdSDK */,
 				9A1D3AA02DFFEE64004D00F9 /* CuskyAdSDKTests */,
 				9A1D3A952DFFEE64004D00F9 /* Products */,
 			);
@@ -84,6 +98,7 @@
 			children = (
 				9A1D3A942DFFEE64004D00F9 /* CuskyAdSDK.framework */,
 				9A1D3A9C2DFFEE64004D00F9 /* CuskyAdSDKTests.xctest */,
+				9A1D3B172DFFF48A004D00F9 /* CuskyAdSDKBundle.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,7 +130,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9A1D3A962DFFEE64004D00F9 /* CuskyAdSDK */,
+				9A1D3A962DFFEE64004D00F9 /* FBirdAdSDK */,
 			);
 			name = CuskyAdSDK;
 			packageProductDependencies = (
@@ -147,6 +162,25 @@
 			productReference = 9A1D3A9C2DFFEE64004D00F9 /* CuskyAdSDKTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		9A1D3B162DFFF48A004D00F9 /* CuskyAdSDKBundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A1D3B182DFFF48A004D00F9 /* Build configuration list for PBXNativeTarget "CuskyAdSDKBundle" */;
+			buildPhases = (
+				9A1D3B132DFFF48A004D00F9 /* Sources */,
+				9A1D3B142DFFF48A004D00F9 /* Frameworks */,
+				9A1D3B152DFFF48A004D00F9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CuskyAdSDKBundle;
+			packageProductDependencies = (
+			);
+			productName = CuskyAdSDKBundle;
+			productReference = 9A1D3B172DFFF48A004D00F9 /* CuskyAdSDKBundle.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -160,6 +194,9 @@
 						CreatedOnToolsVersion = 16.2;
 					};
 					9A1D3A9B2DFFEE64004D00F9 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					9A1D3B162DFFF48A004D00F9 = {
 						CreatedOnToolsVersion = 16.2;
 					};
 				};
@@ -180,6 +217,7 @@
 			targets = (
 				9A1D3A932DFFEE64004D00F9 /* CuskyAdSDK */,
 				9A1D3A9B2DFFEE64004D00F9 /* CuskyAdSDKTests */,
+				9A1D3B162DFFF48A004D00F9 /* CuskyAdSDKBundle */,
 			);
 		};
 /* End PBXProject section */
@@ -196,6 +234,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A1D3B152DFFF48A004D00F9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A1D3B1D2DFFF58D004D00F9 /* Media.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +262,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9A1D3B132DFFF48A004D00F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -230,9 +283,10 @@
 		9A1D3AA62DFFEE64004D00F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -240,16 +294,19 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = zte.CuskyAdSDK;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.cusky.ad.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -259,9 +316,10 @@
 		9A1D3AA72DFFEE64004D00F9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -269,16 +327,19 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = zte.CuskyAdSDK;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.cusky.ad.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -435,6 +496,60 @@
 			};
 			name = Release;
 		};
+		9A1D3B192DFFF48A004D00F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.cusky.ad.sdk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		9A1D3B1A2DFFF48A004D00F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.cusky.ad.sdk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -461,6 +576,15 @@
 			buildConfigurations = (
 				9A1D3AAB2DFFEE64004D00F9 /* Debug */,
 				9A1D3AAC2DFFEE64004D00F9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9A1D3B182DFFF48A004D00F9 /* Build configuration list for PBXNativeTarget "CuskyAdSDKBundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A1D3B192DFFF48A004D00F9 /* Debug */,
+				9A1D3B1A2DFFF48A004D00F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
