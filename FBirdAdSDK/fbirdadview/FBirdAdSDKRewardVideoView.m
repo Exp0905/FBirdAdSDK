@@ -1,5 +1,5 @@
 //
-//  CuskyAdSDKRewardVideoView.m
+//  FBirdAdSDKRewardVideoView.m
 //  Test1
 //
 //  Created by zte1234 on 2025/5/19.
@@ -9,12 +9,13 @@
 #import "FBirdAdSDKResourceManager.h"
 #import "FBirdAdSDKPopupView.h" // 导入弹窗视图
 
-@implementation FBirdAdSDKRewardVideoView{
+@implementation FBirdAdSDKRewardVideoView {
     FBirdAdSDKPopupView *_popupView;
     BOOL _isPopupVisible; // 跟踪弹窗状态
     NSTimer *_countdownTimer;
     NSInteger _remainingSeconds;
 }
+
 // 使用代码创建视图时调用的初始化方法
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -23,12 +24,13 @@
     }
     return self;
 }
+
 // MARK: - 公共初始化逻辑 (Common Initialization Logic)
 - (void)startCountdownWithDuration:(NSInteger)duration {
     // 取消之前的定时器
     [_countdownTimer invalidate];
     _countdownTimer = nil;
-    
+
     _remainingSeconds = duration;
     [self updateTimerLabel]; // 更新初始显示
 
@@ -39,14 +41,15 @@
                                                      userInfo:nil
                                                       repeats:YES];
 }
+
 - (void)updateCountdown {
     _remainingSeconds--;
-    
+
     if (_remainingSeconds <= 0) {
         [_countdownTimer invalidate];
         _countdownTimer = nil;
 
-        _timerLabel.text = @"可领金币"; // 倒计时结束
+        _timerLabel.text = @"可领奖励"; // 倒计时结束
         // 可选：自动触发某些奖励操作
         [self rewardUserAfterCountdown];
     } else {
@@ -55,30 +58,57 @@
 }
 
 - (void)updateTimerLabel {
-    _timerLabel.text = [NSString stringWithFormat:@"%ld秒后可领金币", (long)_remainingSeconds];
+    _timerLabel.text = [NSString stringWithFormat:@"%ld秒后可领奖励", (long)_remainingSeconds];
 }
+
+- (void)pauseCountdown {
+    [_countdownTimer invalidate];
+    _countdownTimer = nil;
+}
+
+- (void)resumeCountdown {
+    if (_remainingSeconds > 0 && !_countdownTimer) {
+        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+                                                           target:self
+                                                         selector:@selector(updateCountdown)
+                                                         userInfo:nil
+                                                          repeats:YES];
+    }
+}
+
 - (void)rewardUserAfterCountdown {
-//    CuskyLog(@"倒计时完成，发放奖励！");
+    //    CuskyLog(@"倒计时完成，发放奖励！");
     // TODO: 添加发放奖励或通知代理的逻辑
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeOnAdReward);
+    }
     [self closeTheView];
 }
-- (void)closeTheView{
+
+- (void)closeTheView {
+    // 停止定时器
+    [self pauseCountdown];
+
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeClose);
+    }
     // 动画淡出并移除
-       [UIView animateWithDuration:0.3 animations:^{
-           self.alpha = 0;
-       } completion:^(BOOL finished) {
-           [self removeFromSuperview];
-           if (self.player) {
-               if ([self.player respondsToSelector:@selector(pause)]) {
-                   [self.player pause];
-               }
-           }
-       }];
+    [UIView animateWithDuration:0.3 animations:^{
+        self.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self removeFromSuperview];
+        if (self.player) {
+            if ([self.player respondsToSelector:@selector(pause)]) {
+                [self.player pause];
+            }
+        }
+    }];
 }
+
 // 包含所有 UI 元素的创建、配置和布局约束设置的公共方法
 - (void)setupViews {
-    // 设置主视图的背景颜色
-    
+    // 设置主视图的背景颜色（可根据需要调整）
+    self.backgroundColor = [UIColor blackColor];
 
     // --- 主图片视图 (kg3-vi-9fv) ---
     self.mainImageV = [[UIImageView alloc] init];
@@ -107,42 +137,38 @@
     _timerIconImageView = [[UIImageView alloc] init];
     _timerIconImageView.clipsToBounds = YES;
     _timerIconImageView.userInteractionEnabled = NO;
-    _timerIconImageView.image = [FBirdAdSDKResourceManager imageNamed:@"cuskyadview_white_close"];
+    _timerIconImageView.image = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_white_close"];
     _timerIconImageView.contentMode = UIViewContentModeScaleAspectFit;
     _timerIconImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [_timerContainerView addSubview:_timerIconImageView];
 
-    // --- 广告标签容器视图 (NlC-Vh-CYa) ---
+    // --- 广告标签容器视图 (NlC-Vh-CYa) 仅包含静音按钮，位于左上角 ---
     _adTagContainerView = [[UIView alloc] init];
     _adTagContainerView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
     _adTagContainerView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_adTagContainerView];
 
-    // --- 广告标签文本 (WTd-cV-m0l) 在 adTagContainerView 内部 ---
-    _adTagLabel = [[UILabel alloc] init];
-    _adTagLabel.text = @"广告";
-    _adTagLabel.font = [UIFont systemFontOfSize:13];
-    _adTagLabel.textColor = [UIColor whiteColor];
-    _adTagLabel.textAlignment = NSTextAlignmentNatural;
-    _adTagLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [_adTagContainerView addSubview:_adTagLabel];
-
-    // --- 广告标签箭头图标视图 (UDR-T3-Aa2) 在 adTagContainerView 内部 ---
+    // --- 静音按钮图标 (原箭头图标) ---
     _adTagArrowImageView = [[UIImageView alloc] init];
-    _adTagArrowImageView.image = [FBirdAdSDKResourceManager imageNamed:@"cuskyadview_volume"];
+    _adTagArrowImageView.image = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_volume"];
     _adTagArrowImageView.clipsToBounds = YES;
-    _adTagArrowImageView.userInteractionEnabled = NO;
+    _adTagArrowImageView.userInteractionEnabled = YES;      // 需要交互
     _adTagArrowImageView.contentMode = UIViewContentModeScaleAspectFit;
     _adTagArrowImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [_adTagContainerView addSubview:_adTagArrowImageView];
 
-    // --- 广告标签分隔线视图 (bb5-Nv-D0U) 在 adTagContainerView 内部 ---
-    _adTagSeparatorView = [[UIView alloc] init];
-    _adTagSeparatorView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_adTagContainerView addSubview:_adTagSeparatorView];
+    // --- 广告标识图片（独立放置到视频右下角）---
+    _adTagImageView = [[UIImageView alloc] init];
+    _adTagImageView.image = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"];
+    _adTagImageView.clipsToBounds = YES;
+    _adTagImageView.userInteractionEnabled = NO;
+    _adTagImageView.contentMode = UIViewContentModeScaleAspectFit;
+    _adTagImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:_adTagImageView];   // 直接添加到主视图
 
     // --- 底部容器视图 (RIa-P2-j9z) ---
     _bottomContainerView = [[UIView alloc] init];
+    _bottomContainerView.backgroundColor = [UIColor whiteColor];
     _bottomContainerView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_bottomContainerView];
 
@@ -188,7 +214,7 @@
     [_bottomContainerView addSubview:self.centerDetailL];
 
     // =============== 新增弹窗组件 ===============
-  
+
     // MARK: - 设置约束 (Set up Constraints)
 
     // 激活一组约束，使用数组方式更简洁
@@ -199,7 +225,7 @@
         [self.mainImageV.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
 
         // timerContainerView 约束
-        [_timerContainerView.topAnchor constraintEqualToAnchor:self.topAnchor constant:43],
+        [_timerContainerView.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:10],
         [_timerContainerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-14],
         [_timerContainerView.heightAnchor constraintEqualToConstant:25],
 
@@ -215,28 +241,23 @@
         // timerLabel 和 timerIconImageView 之间的约束
         [_timerLabel.trailingAnchor constraintEqualToAnchor:_timerIconImageView.leadingAnchor constant:-5],
 
-        // adTagContainerView 约束
-        [_adTagContainerView.topAnchor constraintEqualToAnchor:self.topAnchor constant:44],
+        // adTagContainerView 约束（左上角）
+        [_adTagContainerView.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:10],
         [_adTagContainerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:14],
         [_adTagContainerView.heightAnchor constraintEqualToConstant:25],
 
-        // adTagLabel 约束 (在 adTagContainerView 内部)
-        [_adTagLabel.centerYAnchor constraintEqualToAnchor:_adTagContainerView.centerYAnchor],
-        [_adTagLabel.leadingAnchor constraintEqualToAnchor:_adTagContainerView.leadingAnchor constant:8],
-
-        // adTagArrowImageView 约束 (在 adTagContainerView 内部)
+        // 静音按钮在容器内的约束（居中，左右留边距）
         [_adTagArrowImageView.centerYAnchor constraintEqualToAnchor:_adTagContainerView.centerYAnchor],
-        [_adTagArrowImageView.trailingAnchor constraintEqualToAnchor:_adTagContainerView.trailingAnchor constant:-5],
+        [_adTagArrowImageView.leadingAnchor constraintEqualToAnchor:_adTagContainerView.leadingAnchor constant:8],
+        [_adTagArrowImageView.trailingAnchor constraintEqualToAnchor:_adTagContainerView.trailingAnchor constant:-8],
         [_adTagArrowImageView.widthAnchor constraintEqualToConstant:16],
         [_adTagArrowImageView.heightAnchor constraintEqualToConstant:13],
 
-        // adTagSeparatorView 约束 (在 adTagContainerView 内部)
-        [_adTagSeparatorView.topAnchor constraintEqualToAnchor:_adTagContainerView.topAnchor constant:8],
-        [_adTagSeparatorView.bottomAnchor constraintEqualToAnchor:_adTagContainerView.bottomAnchor constant:-8],
-        [_adTagSeparatorView.widthAnchor constraintEqualToConstant:1],
-        // adTagLabel、分隔线和箭头之间的约束
-        [_adTagSeparatorView.leadingAnchor constraintEqualToAnchor:_adTagLabel.trailingAnchor constant:8],
-        [_adTagSeparatorView.trailingAnchor constraintEqualToAnchor:_adTagArrowImageView.leadingAnchor constant:-8],
+        // 广告标识图片约束：位于 mainImageV 右下角，边距 8pt，宽高根据图片比例设定（示例 50x20）
+        [_adTagImageView.trailingAnchor constraintEqualToAnchor:self.mainImageV.trailingAnchor constant:-8],
+        [_adTagImageView.bottomAnchor constraintEqualToAnchor:self.mainImageV.bottomAnchor constant:-8],
+        [_adTagImageView.widthAnchor constraintEqualToConstant:43],
+        [_adTagImageView.heightAnchor constraintEqualToConstant:16],
 
         // bottomContainerView 约束
         [_bottomContainerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
@@ -249,28 +270,29 @@
 
         // appIconImageView 约束 (在 bottomContainerView 内部)
         [_appIconImageView.centerXAnchor constraintEqualToAnchor:_bottomContainerView.centerXAnchor],
-        [_appIconImageView.topAnchor constraintEqualToAnchor:_bottomContainerView.topAnchor constant:-50], // 向上偏移
+        [_appIconImageView.topAnchor constraintEqualToAnchor:_bottomContainerView.topAnchor constant:-30], 
         [_appIconImageView.widthAnchor constraintEqualToConstant:60],
         [_appIconImageView.heightAnchor constraintEqualToConstant:60],
+
+        // appNameLabel 约束 (在 bottomContainerView 内部)
+        [self.centerNameL.centerXAnchor constraintEqualToAnchor:_bottomContainerView.centerXAnchor],
+        [self.centerNameL.topAnchor constraintEqualToAnchor:_appIconImageView.bottomAnchor constant:5],
+
+        // tagStackView 约束 (在 bottomContainerView 内部)
+        [_tagStackView.centerXAnchor constraintEqualToAnchor:_bottomContainerView.centerXAnchor],
+        [_tagStackView.topAnchor constraintEqualToAnchor:self.centerNameL.bottomAnchor constant:5],
+        [_tagStackView.heightAnchor constraintEqualToConstant:20], 
+
+        // adDescriptionLabel 约束 (在 bottomContainerView 内部)
+        [self.centerDetailL.centerXAnchor constraintEqualToAnchor:_bottomContainerView.centerXAnchor],
+        [self.centerDetailL.topAnchor constraintEqualToAnchor:_tagStackView.bottomAnchor constant:5],
 
         // actionButton 约束 (在 bottomContainerView 内部)
         [self.actionButton.leadingAnchor constraintEqualToAnchor:_bottomContainerView.leadingAnchor constant:14],
         [self.actionButton.trailingAnchor constraintEqualToAnchor:_bottomContainerView.trailingAnchor constant:-14],
-        [self.actionButton.bottomAnchor constraintEqualToAnchor:_bottomContainerView.bottomAnchor constant:-30],
+        [self.actionButton.bottomAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.bottomAnchor constant:-15],
         [self.actionButton.heightAnchor constraintEqualToConstant:45],
-
-        // appNameLabel 约束 (在 bottomContainerView 内部)
-        [self.centerNameL.centerXAnchor constraintEqualToAnchor:_bottomContainerView.centerXAnchor],
-        [self.centerNameL.topAnchor constraintEqualToAnchor:_appIconImageView.bottomAnchor constant:8],
-
-        // tagStackView 约束 (在 bottomContainerView 内部)
-        [_tagStackView.centerXAnchor constraintEqualToAnchor:_bottomContainerView.centerXAnchor],
-        [_tagStackView.topAnchor constraintEqualToAnchor:self.centerNameL.bottomAnchor constant:10],
-        [_tagStackView.heightAnchor constraintEqualToConstant:20], // Stack View 本身的高度约束
-
-        // adDescriptionLabel 约束 (在 bottomContainerView 内部)
-        [self.centerDetailL.centerXAnchor constraintEqualToAnchor:_bottomContainerView.centerXAnchor],
-        [self.centerDetailL.topAnchor constraintEqualToAnchor:_tagStackView.bottomAnchor constant:18],
+        [self.actionButton.topAnchor constraintGreaterThanOrEqualToAnchor:self.centerDetailL.bottomAnchor constant:5],
     ]];
 
     // MARK: - 初始化时设置默认标签
@@ -278,29 +300,29 @@
     // 当视图被初始化时，调用 setTagsWithTexts: 方法并传入 nil，
     // 这将导致 Stack View 填充默认的三个标签。
     [self setTagsWithTexts:nil];
+
     // =============== 为关闭按钮添加点击事件 ===============
-        // 确保关闭按钮已创建（如果从父类继承）
+    // 确保关闭按钮已创建（如果从父类继承）
     if (!self.closeImageView) {
         self.closeImageView = [[UIImageView alloc] init];
-        self.closeImageView.image = [FBirdAdSDKResourceManager imageNamed:@"cuskyadview_white_close"];
+        self.closeImageView.image = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_white_close"];
         self.closeImageView.userInteractionEnabled = YES;
         self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:self.closeImageView];
     }
-    
-    // 添加点击手势
+
+    // 添加点击手势到倒计时容器
     UITapGestureRecognizer *closeTap = [[UITapGestureRecognizer alloc]
-                                      initWithTarget:self
-                                      action:@selector(handleCloseButtonTap)];
+                                        initWithTarget:self
+                                        action:@selector(handleCloseButtonTap)];
     [_timerContainerView addGestureRecognizer:closeTap];
-    
+
     // =============== 为声音按钮添加点击事件 ===============
     UITapGestureRecognizer *soundTap = [[UITapGestureRecognizer alloc]
-                                      initWithTarget:self
-                                      action:@selector(handleSoundButtonTap)];
-    _adTagArrowImageView.userInteractionEnabled = YES;
+                                        initWithTarget:self
+                                        action:@selector(handleSoundButtonTap)];
     [_adTagArrowImageView addGestureRecognizer:soundTap];
-    
+
     // 初始化声音状态
     self.isMuted = NO;
     [self updateSoundIcon];
@@ -323,7 +345,7 @@
 
     // 3. 根据选定的文本数组添加新的标签
     for (NSString *text in textsToUse) {
-        UIColor * bgColor = [UIColor colorWithRed:243/255.0 green:243/255.0 blue:243/255.0 alpha:1];
+        UIColor *bgColor = [UIColor colorWithRed:243/255.0 green:243/255.0 blue:243/255.0 alpha:1];
         // 使用辅助方法创建并配置标签
         UILabel *tagLabel = [self createTagLabelWithText:text backgroundColor:bgColor];
         // 将新标签添加到 Stack View 的 arrangedSubviews 数组中
@@ -362,21 +384,28 @@
 #pragma mark - 按钮点击处理
 // 处理关闭按钮点击
 - (void)handleCloseButtonTap {
+    // 暂停倒计时
+    [self pauseCountdown];
+
     // 创建弹窗
     _popupView = [[FBirdAdSDKPopupView alloc] initWithFrame:self.bounds];
     [_popupView startCountdownWithSeconds:_remainingSeconds];
-    
-    
+
     // 设置按钮处理
     __weak typeof(self) weakSelf = self;
     _popupView.continueHandler = ^{
         [weakSelf resumeAdPlayback];
     };
-    
+
     _popupView.exitHandler = ^{
         [weakSelf closeTheView];
     };
-    
+    if (self.player) {
+        if ([self.player respondsToSelector:@selector(pause)]) {
+            [self.player pause];
+        }
+    }
+
     // 显示弹窗
     [_popupView showInView:self];
     _isPopupVisible = YES;
@@ -386,8 +415,6 @@
 - (void)handleSoundButtonTap {
     [self toggleMuteStatus];
 }
-
-
 
 #pragma mark - 声音控制
 // 切换静音状态
@@ -399,23 +426,29 @@
     }
     // 实际应用中控制广告音频
     if (self.isMuted) {
-//        CuskyLog(@"广告已静音");
+        //        CuskyLog(@"广告已静音");
     } else {
-//        CuskyLog(@"广告恢复声音");
+        //        CuskyLog(@"广告恢复声音");
     }
 }
 
 // 更新声音图标
 - (void)updateSoundIcon {
-    NSString *imageName = self.isMuted ? @"cuskyadview_muted" : @"cuskyadview_volume";
+    NSString *imageName = self.isMuted ? @"fbirdadview_muted" : @"fbirdadview_volume";
     _adTagArrowImageView.image = [FBirdAdSDKResourceManager imageNamed:imageName];
 }
 
 #pragma mark - 弹窗控制方法
 - (void)resumeAdPlayback {
+    // 恢复倒计时
+    [self resumeCountdown];
+
     // 继续播放广告
-//    CuskyLog(@"用户选择继续观看");
-    // 这里添加恢复广告播放的逻辑
+    if (self.player) {
+        if ([self.player respondsToSelector:@selector(play)]) {
+            [self.player play];
+        }
+    }
 }
 
 @end

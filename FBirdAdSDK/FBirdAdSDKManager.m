@@ -15,7 +15,7 @@
 
 @implementation FBirdAdSDKManager
 
-static BOOL kCuskyLogEnabled = true;
+static BOOL kCuskyLogEnabled = false;
 
 #pragma mark - JSON 日志辅助
 void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
@@ -43,7 +43,7 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
 #pragma mark - 公有：多次请求
 + (void)loadAdsWithTagID:(NSString *)tagid
                     caid:(NSString *)caid
-                   adtype:(FBirdAdType)adtype
+                   adtype:(int)adtype
             requestCount:(NSInteger)requestCount
               completion:(void (^)(NSArray<FBirdAdSDKAdResponseModel *> *, NSArray<NSError *> *))completion
 {
@@ -109,41 +109,43 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
 }
 //+(void) canUseIDFV
 
-#pragma mark - 公有：单次请求并绑定 View
-+ (void)loadAdWithTagID:(NSString *)tagid
-                  caid:(NSString *)caid
-                 adtype:(FBirdAdType)adtype
-         adContainerView:(UIView *)adContainerView
-              completion:(void (^)(FBirdAdSDKView * _Nullable, NSError * _Nullable))completion
+#pragma mark - 公有：多视图广告请求
++ (void)loadAdViewsWithTagID:(NSString *)tagid
+                        caid:(NSString *)caid
+                      adtype:(int)adtype
+                requestCount:(NSInteger)requestCount
+                  completion:(void (^)(NSArray<FBirdAdSDKView *> * _Nullable adViews, NSArray<NSError *> * _Nullable errors))completion
 {
-//    adContainerView.hidden = true;
     [self loadAdsWithTagID:tagid
                       caid:caid
-                     adtype:adtype
-              requestCount:1
+                    adtype:adtype
+              requestCount:requestCount
                 completion:^(NSArray<FBirdAdSDKAdResponseModel *> *responses, NSArray<NSError *> *errors) {
-        FBirdAdSDKAdResponseModel *model = responses.firstObject;
-        if (model && model.seatbid.bid.count > 0) {
-            FBirdAdSDKBid *firstBid = model.seatbid.bid.firstObject;
-            dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSMutableArray<FBirdAdSDKView *> *resultViews = [NSMutableArray array];
+        
+        for (FBirdAdSDKAdResponseModel *model in responses) {
+            for (FBirdAdSDKBid *bid in model.seatbid.bid) {
                 CGSize adSize = [self sizeForStyle:adtype];
-                FBirdAdSDKView *adview = [[FBirdAdSDKView alloc] initWithFrame:CGRectMake(0, 0, adSize.width, adSize.height) adtype:adtype];
-                [adview configureWithBid:firstBid];
-                if (completion) completion(adview, nil);
-                
-            });
-        } else {
-            NSError *err = errors.firstObject;
-            
-            NSLog(@"广告加载失败: %@", err.localizedDescription);
-            if (completion) completion(nil, err);
+                FBirdAdSDKView *adView = [[FBirdAdSDKView alloc] initWithFrame:CGRectMake(0, 0, adSize.width, adSize.height)
+                                                                        adtype:adtype];
+                [adView configureWithBid:bid];
+                [resultViews addObject:adView];
+            }
         }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) {
+                completion([resultViews copy], [errors copy]);
+            }
+        });
     }];
 }
 
+
 // 根据广告样式返回推荐宽高（单位：pt）
 #pragma mark
-+(CGSize)sizeForStyle:(FBirdAdType)adType {
++(CGSize)sizeForStyle:(int)adType {
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     switch (adType) {
         case Feed:
@@ -207,7 +209,7 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
         return;
     }
     
-    NSURL *url = [NSURL URLWithString:@"https://req.adx.xlqeai.cusky.cn/sdk/request"];
+    NSURL *url = [NSURL URLWithString:@"https://req.adx.xlqeai.com/sdk/request"];
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
     req.HTTPMethod = @"POST";
     req.HTTPBody   = reqbody;
@@ -229,12 +231,8 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
             } else {
                 FBirdAdSDKAdResponseDataModel *date = [[FBirdAdSDKAdResponseDataModel alloc] initWithDateDictionary:json];
                 NSString *resp = [FBirdAdSDKAESHelper decrypt:date.data] ;
-                NSString *replacedString = [resp stringByReplacingOccurrencesOfString:@"xlqeai.com"
-                                                                                    withString:@"xlqeai.cusky.cn"
-                                                                                       options:0
-                                                                                         range:NSMakeRange(0, [resp length])];
-                if(replacedString.length > 0) {
-                    NSData *respdata = [replacedString dataUsingEncoding:NSUTF8StringEncoding];
+                if(resp.length > 0) {
+                    NSData *respdata = [resp dataUsingEncoding:NSUTF8StringEncoding];
                     NSDictionary *respjson = [NSJSONSerialization JSONObjectWithData:respdata options:0 error:&parseErr];
                     FBirdAdSDKAdResponseModel *model = [[FBirdAdSDKAdResponseModel alloc] initWithDictionary:respjson];
                     if (completion) completion(model, nil);
@@ -243,7 +241,7 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
             }
         } else {
             NSString *msg = [NSString stringWithFormat:@"状态码 %ld", (long)httpResp.statusCode];
-            NSError *respErr = [NSError errorWithDomain:@"CuskyAdSDK"
+            NSError *respErr = [NSError errorWithDomain:@"FBirdAdSDK"
                                                    code:httpResp.statusCode
                                                userInfo:@{NSLocalizedDescriptionKey: msg}];
             if (completion) completion(nil, respErr);
@@ -261,7 +259,7 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
 {
     FBirdAdSDKBid *bid = adResponse;
     if (!bid) {
-        if (completion) completion(NO, [NSError errorWithDomain:@"CuskyAdSDK" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"无有效Bid"}]);
+        if (completion) completion(NO, [NSError errorWithDomain:@"FBirdAdSDK" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"无有效Bid"}]);
         return;
     }
     NSArray<NSString *> *rawUrls;
@@ -271,23 +269,44 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
         case CuskyAdSDKAdUrlTypeImpression:rawUrls = bid.events.imp_urls.count>0       ? bid.events.imp_urls       : (bid.nurl?@[bid.nurl]:@[]);       break;
     }
     if (rawUrls.count == 0) {
-        if (completion) completion(NO, [NSError errorWithDomain:@"CuskyAdSDK" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"无有效URL"}]);
+        if (completion) completion(NO, [NSError errorWithDomain:@"FBirdAdSDK" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"无有效URL"}]);
         return;
     }
-    NSString *urlTpl = rawUrls.firstObject;
-    NSString *urlStr = [self replaceMacrosInUrl:urlTpl fromView:view clickPoint:pt winPrice:[NSString stringWithFormat:@"%ld",(long)bid.price]];
-    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
-    if (kCuskyLogEnabled) {
-        NSLog(@"🔗 上报URL: %@", urlStr);
+//    NSString *urlTpl = rawUrls.firstObject;
+//    NSString *urlStr = [self replaceMacrosInUrl:urlTpl fromView:view clickPoint:pt winPrice:[NSString stringWithFormat:@"%ld",(long)bid.price]];
+//    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+//    if (kCuskyLogEnabled) {
+//        NSLog(@"🔗 上报URL: %@", urlStr);
+//    }
+//    
+//    
+//    [[[NSURLSession sharedSession] dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
+//        BOOL success = (!err && ((NSHTTPURLResponse*)resp).statusCode/100 == 2);
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            if (completion) completion(success, err);
+//        });
+//    }] resume];
+    
+    for (int i = 0; i < rawUrls.count; i++) {
+        NSString *urlTpl = rawUrls[i];
+        NSString *urlStr = [self replaceMacrosInUrl:urlTpl fromView:view clickPoint:pt winPrice:[NSString stringWithFormat:@"%ld",(long)bid.price]];
+        NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
+        if (kCuskyLogEnabled) {
+            NSLog(@"🔗 上报URL: %@", urlStr);
+        }
+        [[[NSURLSession sharedSession] dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
+            BOOL success = (!err && ((NSHTTPURLResponse*)resp).statusCode/100 == 2);
+            if(i == rawUrls.count - 1) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (completion) completion(success, err);
+                });
+            }
+       
+            if (kCuskyLogEnabled) {
+                NSLog(@"🔗 上报状态: %ld", ((NSHTTPURLResponse*)resp).statusCode);
+            }
+        }] resume];
     }
-    
-    
-    [[[NSURLSession sharedSession] dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
-        BOOL success = (!err && ((NSHTTPURLResponse*)resp).statusCode/100 == 2);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completion) completion(success, err);
-        });
-    }] resume];
 }
 
 #pragma mark - URL 宏替换
@@ -332,7 +351,7 @@ void CuskyLogJSON(NSString *prefix, NSDictionary *jsonDict) {
     }
 }
 + (NSString *)sdkVersion {
-    return @"1.2.1";
+    return @"1.0.2";
 }
 
 +(void) setCanUseIDFVState:(BOOL) canUse{

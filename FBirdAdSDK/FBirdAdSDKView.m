@@ -28,16 +28,24 @@
 #import <objc/runtime.h>
 #import "FBirdAdSDK.h"
 // 设置为 1 打开日志打印，0 关闭所有 SDK 内部日志
-#define CuskyAdSDK_LOG_ENABLED 1
+#define CuskyAdSDK_LOG_ENABLED 0
 
 #if CuskyAdSDK_LOG_ENABLED
     #define CuskyLog(fmt, ...) NSLog((@"[FBirdAdSDK] " fmt), ##__VA_ARGS__)
 #else
     #define CuskyLog(fmt, ...)
 #endif
+FBirdAdUserActionType const FBirdAdUserActionTypeClose       = @"close";
+FBirdAdUserActionType const FBirdAdUserActionTypeSkip        = @"skip";
+FBirdAdUserActionType const FBirdAdUserActionTypeConfirmExit = @"confirmExit";
+FBirdAdUserActionType const FBirdAdUserActionTypeSwipeUp  = @"swipeUp";
+FBirdAdUserActionType const FBirdAdUserActionTypeShake    = @"shake";
+FBirdAdUserActionType const FBirdAdUserActionTypeClickDetail = @"clickDetail";
+FBirdAdUserActionType const FBirdAdUserActionTypeOnAdReward = @"onAdReward";
+FBirdAdUserActionType const FBirdAdUserActionTypeOnAdShow = @"onAdShow";
+
 
 @interface FBirdAdSDKView()<FBirdAdSplashType1ViewDelegate>
-@property (nonatomic, strong) FBirdAdSDKBid * currentBid;
 @property (nonatomic, assign) FBirdAdSDKAdStyle style;
 @property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
@@ -47,80 +55,86 @@
 @end
 @implementation FBirdAdSDKView
 
-- (instancetype)initWithFrame:(CGRect)frame adtype:(FBirdAdType)adtype {
+- (instancetype)initWithFrame:(CGRect)frame adtype:(int)adtype {
     self = [super initWithFrame:frame];
     if (self) {
         Class adClass = nil;
-        // 根据传入的广告样式枚举值，选择具体的广告视图子类
+        FBirdAdSDKAdStyle style = CuskyAdSDKAdStyleTopBottomRightSmallButton;
+
         switch (adtype) {
-            case Feed:
+            case Feed: {
                 @try {
-                    NSInteger random = arc4random_uniform((uint32_t)6);
-                    CuskyLog(@"Feed_random: %li", random);
-                    if(random == 0) {
-                        adClass = [FBirdAdSDKImageTopTextBottomView class];
-                        self.style = CuskyAdSDKAdStyleImageBottomButton;
-                        break;
-                    } else if(random == 1){
-                        adClass = [FBirdAdSDKTopBottomRightSmallButtonView class];
-                        self.style = CuskyAdSDKAdStyleTopBottomRightSmallButton;
-                        break;
-                    }else if(random == 2){
-                        adClass = [FBirdAdSDKTopBottomLeftBigLogoView class];
-                        self.style = CuskyAdSDKAdStyleTopBottomLeftBigLogo;
-                        break;
-                    }else if(random == 3){
-                        adClass = [FBirdAdSDKLargeImageNoButtonView class];
-                        self.style = CuskyAdSDKAdStyleLargeImageNoButton;
-                        break;
-                    }else if(random == 4){
-                        adClass = [FBirdAdSDKTextFloatRightButtonView class];
-                        self.style = CuskyAdSDKAdStyleTextFloatRightButton;
-                        break;
-                    }else if(random == 5){
-                        adClass = [FBirdAdSDKImageBottomButtonView class];
-                        self.style = CuskyAdSDKAdStyleImageBottomButton;
-                        break;
+                    NSInteger random = arc4random_uniform(6);
+                    CuskyLog(@"Feed_random: %li", (long)random);
+                    switch (random) {
+                        case 0:
+                            adClass = [FBirdAdSDKImageTopTextBottomView class];
+                            style = CuskyAdSDKAdStyleImageBottomButton;
+                            break;
+                        case 1:
+                            adClass = [FBirdAdSDKTopBottomRightSmallButtonView class];
+                            style = CuskyAdSDKAdStyleTopBottomRightSmallButton;
+                            break;
+                        case 2:
+                            adClass = [FBirdAdSDKImageBottomButtonView class];
+                            style = CuskyAdSDKAdStyleImageBottomButton;
+                            break;
+                        case 3:
+                            adClass = [FBirdAdSDKLargeImageNoButtonView class];
+                            style = CuskyAdSDKAdStyleLargeImageNoButton;
+                            break;
+                        case 4:
+                            adClass = [FBirdAdSDKTextFloatRightButtonView class];
+                            style = CuskyAdSDKAdStyleTextFloatRightButton;
+                            break;
+                        case 5:
+                            adClass = [FBirdAdSDKImageBottomButtonView class];
+                            style = CuskyAdSDKAdStyleImageBottomButton;
+                            break;
+                        default:
+                            break;
                     }
-                    
                 } @catch (NSException *exception) {
-                   
-                } @finally {
-                   
+                    // handle exception
                 }
+                break;
+            }
             case Interstitial:
                 adClass = [FBirdAdSDKCustomInterstitialView class];
-                self.style = CuskyAdSDKAdStyleCustomInterstitial;
-//                adClass = [FBirdAdSDKCustomInterstitial2View class];
+                style = CuskyAdSDKAdStyleCustomInterstitial;
                 break;
             case Banner:
                 adClass = [FBirdAdSDKFunctionListBannerView class];
-                self.style = CuskyAdSDKAdStyleFunctionListBanner;
-//                adClass = [FBirdAdSDKWiFiListBannerView class];
+                style = CuskyAdSDKAdStyleFunctionListBanner;
                 break;
             case Splash:
                 adClass = [FBirdAdSDKSplashType1View class];
-                self.style = CuskyAdSDKAdStyleSplashType1;
-//                adClass = [FBirdAdSDKSplashType2View class];
+                style = CuskyAdSDKAdStyleSplashType1;
                 break;
             case RewardVideo:
                 adClass = [FBirdAdSDKRewardVideoView class];
-                self.style = CuskyAdSDKAdStyleRewardVideo;
+                style = CuskyAdSDKAdStyleRewardVideo;
                 break;
             case Draw:
             case Video:
-//                adClass = [FBirdAdSDKImageBottomButtonView class];
+                adClass = [FBirdAdSDKRewardVideoView class];
+                style = CuskyAdSDKAdStyleRewardVideo;
                 break;
         }
-        // 使用 Runtime 获取类名并动态创建实例，确保是 CuskyAdSDKView 的子类
+
         if (adClass && class_getSuperclass(adClass) == [FBirdAdSDKView class]) {
-            self = [[NSClassFromString(NSStringFromClass(adClass)) alloc] initWithFrame:frame];
+            FBirdAdSDKView *adView = [[NSClassFromString(NSStringFromClass(adClass)) alloc] initWithFrame:frame];
+            adView.style = style;
+            [adView commonInit];
+            return adView; // ✅ 返回正确初始化并设置 style 的子类实例
         }
-       
-        [self commonInit]; // 调用通用初始化方法
+
+        self.style = style;
+        [self commonInit];
     }
     return self;
 }
+
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (self.timeObserver) {
@@ -133,64 +147,82 @@
     self.hasPlayedOnce = YES;
     // 停止播放器播放
     [self.player pause];
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeOnAdReward);
+    }
 }
 
 - (void)playVideoWithURL:(NSString *)videoURL duration:(NSTimeInterval)duration {
+    // 校验 URL 非空
     if ([self isEmpty:videoURL]) {
         CuskyLog(@"视频URL为空，无法播放");
         return;
     }
-    
+
+    // 防止重复播放
     if (self.hasPlayedOnce) {
         CuskyLog(@"视频已经播放过一次，不重复播放");
         return;
     }
-    
+
+    // 创建 URL 实例
     NSURL *url = [NSURL URLWithString:videoURL];
-    if (!url) {
+    if (!url || !url.scheme || !url.host) {
         CuskyLog(@"视频URL格式错误");
         return;
     }
-    
+
+    // 创建 AVPlayerItem 和 AVPlayer 实例
     AVPlayerItem *item = [AVPlayerItem playerItemWithURL:url];
     self.player = [AVPlayer playerWithPlayerItem:item];
-    
+
+    // 监听播放完成通知
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(playerDidFinish:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification
                                                object:item];
-    
+
+    // 如果没有播放器图层，就初始化一个，并添加到主视图中
     if (!self.playerLayer) {
+        [self.mainImageV.superview layoutIfNeeded]; // 强制刷新布局，计算 frame
         self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
         self.playerLayer.frame = self.mainImageV.bounds;
         self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
         [self.mainImageV.layer addSublayer:self.playerLayer];
+
     } else {
-        self.playerLayer.player = self.player;
+        self.playerLayer.player = self.player; // 替换播放源
     }
-    
-    self.playedSeconds = 0;
+
+    // 特殊逻辑：如果是激励视频广告样式，传递 AVPlayer 给视图控制器
     if (self.style == CuskyAdSDKAdStyleRewardVideo){
-        FBirdAdSDKRewardVideoView * vc =  (FBirdAdSDKRewardVideoView*) self;
+        FBirdAdSDKRewardVideoView * vc = (FBirdAdSDKRewardVideoView *)self;
         vc.player = self.player;
     }
-    // 添加时间观察者，周期1秒，记录播放时间，达到时长停止播放
+
+    // 初始化已播放时间
+    self.playedSeconds = 0;
+
+    // 添加时间观察者，每秒触发一次，用于统计播放时间，达到指定时长则自动暂停
     __weak typeof(self) weakSelf = self;
     self.timeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1, NSEC_PER_SEC)
                                                                   queue:dispatch_get_main_queue()
                                                              usingBlock:^(CMTime time) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (!strongSelf) return;
-        
+
         strongSelf.playedSeconds = CMTimeGetSeconds(time);
+
         if (strongSelf.playedSeconds >= duration) {
             [strongSelf.player pause];
             strongSelf.hasPlayedOnce = YES;
             CuskyLog(@"视频播放达到时长，自动停止");
-            // 这里可以发送通知或执行其他逻辑
+ 
+            // 可在这里执行广告奖励发放、UI回调、播放完成通知等逻辑
         }
     }];
-    
+
+    // 开始播放
     [self.player play];
 }
 
@@ -201,6 +233,8 @@
         self.backgroundColor = [UIColor colorWithRed:236/255.0 green:236/255.0 blue:236/255.0 alpha:1];
     }else if (self.style == CuskyAdSDKAdStyleCustomInterstitial2){
         self.backgroundColor =  [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:1];
+    }else if (self.style == CuskyAdSDKAdStyleCustomInterstitial){
+        self.backgroundColor = [UIColor clearColor];
     }else if (self.style == CuskyAdSDKAdStyleSplashType1){
         self.backgroundColor = [UIColor whiteColor];
         FBirdAdSDKSplashType1View * vc =  (FBirdAdSDKSplashType1View*) self;
@@ -209,7 +243,7 @@
     }else if (self.style == CuskyAdSDKAdStyleSplashType2){
         self.backgroundColor = [UIColor whiteColor];
         FBirdAdSDKSplashType2View * vc =  (FBirdAdSDKSplashType2View*) self;
-        vc.onSwipeUpTriggered = ^{
+        vc.onSwipeUpTriggered = ^{ 
             [self splashViewhandleSwipeUp];
         };
     }else if (self.style == CuskyAdSDKAdStyleImageBottomButton){
@@ -220,7 +254,7 @@
     }
     if (self.closeImageView) {
         
-        self.closeImageView.image = [FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"];
+        self.closeImageView.image = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"];
         self.closeImageView.userInteractionEnabled = YES; // 必须开启交互
         // 添加点击手势
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeAdView)];
@@ -230,8 +264,13 @@
         [self.actionButton addTarget:self action:@selector(handleAdActionButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     
+    if(self.mainImageV) {
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleAdActionButtonClick:)];
+        [self.mainImageV addGestureRecognizer:tapGesture];
+    }
+    
     if (self.cornerImageView) {
-        self.cornerImageView.image = [FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"];
+        self.cornerImageView.image = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"];
     }
 }
 - (void)configureWithBid:(FBirdAdSDKBid *)bid {
@@ -240,8 +279,8 @@
         CuskyLog(@"[ERROR] Bid object or admobject is nil. Cannot configure.");
         return;
     }
+    CuskyLog(@"self.style---configureWithBid ---%ld",self.style);
     self.bid = bid;
-    [self notifyAdDidShow:bid];
     // 初始化一个渲染模型，用于存储从 bid 中解析出的广告素材信息。
     // 实际应用中，这个渲染模型可能会是你的自定义 View Model，用于绑定到 UI 元素。
     FBirdAdSDKSynAdRenderModel *renderModel = [[FBirdAdSDKSynAdRenderModel alloc] init];
@@ -333,6 +372,10 @@
             if ([self isEmpty:renderModel.imgUrl] && ![self isEmpty:videoContent.cover]) {
                 renderModel.imgUrl = videoContent.cover;
                 [self loadImageWithURLString:renderModel.imgUrl  intoImageView:self.mainImageV placeholderImage:[UIImage imageNamed:@"placeholder_icon"]];
+            }
+            
+            // 对于激励视频广告，无论是否有主图片URL，都应该播放视频
+            if (self.style == CuskyAdSDKAdStyleRewardVideo) {
                 // 播放视频，传入视频时长
                 [self playVideoWithURL:videoContent.url duration:videoContent.duration];
             }
@@ -397,24 +440,52 @@
 /// 关闭当前广告视图，从父视图中移除
 - (void)closeAdView {
     CuskyLog(@"🚫 广告视图关闭");
+    // 通知业务方点击关闭
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeClose);
+    }
     [self removeFromSuperview];
     // 停止播放器（如果存在）
-       if (self.player) {
-           if ([self.player respondsToSelector:@selector(pause)]) {
-               [self.player pause];
-           }
-       }
+    if (self.player) {
+        if ([self.player respondsToSelector:@selector(pause)]) {
+            [self.player pause];
+        }
+    }
 }
+- (void)show {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        CuskyLog(@"🔔 FBirdAdSDKView 开始展示");
+    });
 
-/// 广告展示完成（可在显示动画完成后调用）
-- (void)notifyAdDidShow:(FBirdAdSDKBid *)bid {
-    CuskyLog(@"✅ 广告展示完成");
-    // 可以通知上层代理/打点逻辑/播放动画等
-    //调用展示完成
-    [FBirdAdSDKManager reportClickWithAdResponse:bid view:self urlType:CuskyAdSDKAdUrlTypeImpression clickPoint:self.center completion:^(BOOL success, NSError * _Nullable error) {
-        CuskyLog(@"调用展示完成-----》%ld--NSError-%@",success,error);
+    // 如果已经展示过，则不重复执行
+    if (self.hasPlayedOnce) {
+        CuskyLog(@"⚠️ 已经展示过，跳过 show");
+        return;
+    }
+    
+    if(self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeOnAdShow);
+    }
+
+    // 设置可见
+    self.hidden = NO;
+    self.alpha = 0.0;
+    // 曝光上报
+    [FBirdAdSDKManager reportClickWithAdResponse:self.bid
+                                            view:self
+                                         urlType:CuskyAdSDKAdUrlTypeImpression
+                                      clickPoint:self.center
+                                      completion:^(BOOL success, NSError * _Nullable error) {
+        CuskyLog(@"📊 ✅ 广告展示完成 %@: %@", success ? @"成功" : @"失败", error);
+    }];
+
+    // 展示动画（可选）
+    [UIView animateWithDuration:0.25 animations:^{
+        self.alpha = 1.0;
     }];
 }
+
 - (void)handleAdActionButtonClick:(UIButton *)sender {
     if (!self.bid) return; // bid 是广告数据
     
@@ -422,9 +493,41 @@
                                         toView:self]; // 点击点可定为按钮中心点
     [self notifyAdDidClick:self.bid view:sender clickPoint:clickPoint];
 }
+
+// 修改手势的 action 方法，让它接收一个 UITapGestureRecognizer 参数
+- (void)handleTap:(UITapGestureRecognizer *)gesture {
+    // 获取被点击的视图
+    UIView *tappedView = gesture.view;
+    // 获取点击点（相对于 tappedView）
+    CGPoint clickPoint = [gesture locationInView:tappedView];
+//    // 调用原有的业务方法
+    [self notifyAdDidClick:self.bid view:tappedView clickPoint:clickPoint];
+}
+
+- (void)registerClickableViews:(NSArray<UIView *> *)views {
+    if(self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeOnAdShow);
+    }
+    [FBirdAdSDKManager reportClickWithAdResponse:self.bid
+                                            view:self
+                                         urlType:CuskyAdSDKAdUrlTypeImpression
+                                      clickPoint:self.center
+                                      completion:^(BOOL success, NSError * _Nullable error) {
+        CuskyLog(@"📊 ✅ 广告展示完成 %@: %@", success ? @"成功" : @"失败", error);
+    }];
+    for (UIView *view in views) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        [view addGestureRecognizer:tap];
+
+    }
+}
+
 /// 广告点击行为（可以在跳转或上报后调用）
 - (void)notifyAdDidClick:(FBirdAdSDKBid *)bid view:(UIView*)view clickPoint:(CGPoint)clickPoint{
     CuskyLog(@"📊 广告点击已记录");
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeClickDetail);
+    }
     // 可以进行点击上报、打开链接等操作
     __weak typeof(self) weakSelf = self;
     [FBirdAdSDKManager reportClickWithAdResponse:bid view:view urlType:CuskyAdSDKAdUrlTypeClick clickPoint:clickPoint completion:^(BOOL success, NSError * _Nullable error) {
@@ -438,19 +541,9 @@
     // 1. 生成 deeplink 和 fallback target 链接
     NSString *deeplinkStr = bid.deeplink;
     NSString *targetStr = bid.target;
-    
-    NSURL *deeplinkURL = [NSURL URLWithString:deeplinkStr];
-    UIApplication *app = [UIApplication sharedApplication];
 
     // 2. 优先尝试打开 deeplink
-    if (deeplinkURL && [app canOpenURL:deeplinkURL]) {
-        [app openURL:deeplinkURL options:@{} completionHandler:^(BOOL success) {
-            CuskyLog(@"打开 deeplink %@，结果：%d", deeplinkStr, success);
-        }];
-        
-    }else{
-        NSLog(@"deeplink 打开失败");
-    }
+    [self openDeepLinkOrFallbackWithDeepLinkString:deeplinkStr fallbackURLString:targetStr];
     // 4. 上报点击行为（无论成功与否都要上报）
     [FBirdAdSDKManager reportClickWithAdResponse:bid
                                             view:view
@@ -462,13 +555,63 @@
    
 }
 
+- (void)openDeepLinkOrFallbackWithDeepLinkString:(NSString *)deepLinkString
+                                 fallbackURLString:(NSString *)fallbackURLString {
+    NSURL *deepLink = [NSURL URLWithString:deepLinkString];
+    if (!deepLink) return;
+    
+    UIApplication *app = [UIApplication sharedApplication];
+    if (@available(iOS 10.0, *)) {
+        [app openURL:deepLink options:@{} completionHandler:^(BOOL success) {
+            if (success) {
+                CuskyLog(@"成功打开应用: %@", deepLink);
+            } else {
+                CuskyLog(@"打开失败，尝试打开浏览器: %@", fallbackURLString);
+                NSURL *fallbackURL = [NSURL URLWithString:fallbackURLString];
+                if (fallbackURL) {
+                    [app openURL:fallbackURL options:@{} completionHandler:nil];
+                }
+            }
+        }];
+    } else {
+        // Fallback on iOS 9.0
+        if ([app openURL:deepLink]) {
+            CuskyLog(@"成功打开应用: %@", deepLink);
+        } else {
+            CuskyLog(@"打开失败，尝试打开浏览器: %@", fallbackURLString);
+            NSURL *fallbackURL = [NSURL URLWithString:fallbackURLString];
+            if (fallbackURL) {
+                [app openURL:fallbackURL];
+            }
+        }
+    }
+}
+
 #pragma mark - FBirdAdSplashType1ViewDelegate
 - (void)splashViewhandleSwipeUp {
     CuskyLog(@"检测到向上滑动");
     [self notifyAdDidClick:self.bid view:self clickPoint:self.center];
+    // 用户行为回调
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeSwipeUp);
+    }
 }
 - (void)splashViewDidSkip:(UIView *)splashView {
     CuskyLog(@"用户跳过启动广告");
+    // 通知业务方跳过操作
+   if (self.userActionCallback) {
+       self.userActionCallback(FBirdAdUserActionTypeSkip);
+   }
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeClose);
+    }
+    [self removeFromSuperview];
+    // 停止播放器（如果存在）
+    if (self.player) {
+        if ([self.player respondsToSelector:@selector(pause)]) {
+            [self.player pause];
+        }
+    }
     // 这里做关闭广告页操作，比如dismiss或pop
 //    [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -476,6 +619,10 @@
 - (void)splashViewDidShake:(UIView *)splashView {
     CuskyLog(@"用户晃动设备，跳转广告页面");
     [self notifyAdDidClick:self.bid view:self clickPoint:self.center];
+    if (self.userActionCallback) {
+        self.userActionCallback(FBirdAdUserActionTypeShake);
+    }
+    
     // 这里处理晃动跳转逻辑
     // 例如打开广告链接，或跳转到其他页面
 }
@@ -532,6 +679,23 @@
     }];
     [task resume];
 }
+- (void)showToView:(UIView *)containerView {
+    if (!containerView) return;
+
+    // 保证当前视图没有其他父视图
+    if (self.superview != containerView) {
+        [self removeFromSuperview];
+        self.center = CGPointMake(CGRectGetWidth(containerView.bounds)/2.0,
+                                  CGRectGetHeight(containerView.bounds)/2.0);
+        [containerView addSubview:self];
+    }
+
+    // 调用自身展示逻辑
+    if ([self respondsToSelector:@selector(show)]) {
+        [self show];
+    }
+}
+
 @end
 
 // CuskyADSDKSynAdRenderVideoModel.m

@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) UILabel *timerLabel;              // 计时器文本标签
 @property (nonatomic, strong, readonly) UIImageView *timerIconImageView;  // 计时器图标视图
 @property (nonatomic, strong, readonly) UIView *adTagContainerView;       // 广告标签容器视图
-@property (nonatomic, strong, readonly) UILabel *adTagLabel;              // 广告标签文本
+@property (nonatomic, strong, readonly) UIImageView *adTagImageView;      // 广告标签文本
 @property (nonatomic, strong, readonly) UIImageView *adTagArrowImageView; // 广告标签箭头图标
 @property (nonatomic, strong, readonly) UIView *adTagSeparatorView;       // 广告标签分隔线
 @property (nonatomic, strong, readonly) UIView *bottomContainerView;      // 底部容器视图

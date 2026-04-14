@@ -38,7 +38,7 @@
     self.adLogoImageV.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.adLogoImageV];
     
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"]];
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.closeImageView];
@@ -47,7 +47,7 @@
     _adContainerView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_adContainerView];
     
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [_adContainerView addSubview:self.cornerImageView];

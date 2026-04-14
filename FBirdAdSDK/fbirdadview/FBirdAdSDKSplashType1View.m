@@ -4,10 +4,16 @@
 
 #import "FBirdAdSDKSplashType1View.h"
 #import "FBirdAdSDKResourceManager.h"
+#import <CoreMotion/CoreMotion.h>
+
+// 定义摇一摇的灵敏度阈值，数值越大，需要越大的力气才能触发
+static const double SHAKE_THRESHOLD = 2.0;
+
 @interface FBirdAdSDKSplashType1View ()
 
 @property (nonatomic, strong) NSTimer *countdownTimer;
 @property (nonatomic, assign) NSInteger remainingSeconds;
+@property (nonatomic, strong) CMMotionManager *motionManager;
 
 @end
 
@@ -29,14 +35,15 @@
     
     self.mainImageV = [[UIImageView alloc] init];
     self.mainImageV.translatesAutoresizingMaskIntoConstraints = NO;
-    self.mainImageV.contentMode = UIViewContentModeScaleAspectFit;
+    self.mainImageV.contentMode = UIViewContentModeScaleAspectFill;
+    self.mainImageV.clipsToBounds = YES;
     [self.contentView addSubview:self.mainImageV];
     
     self.adLogoContainerView = [[UIView alloc] init];
     self.adLogoContainerView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.adLogoContainerView];
     
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.cornerImageView.clipsToBounds = YES;
@@ -76,7 +83,7 @@
     self.shakeView.clipsToBounds = YES;
     [self.contentView addSubview:self.shakeView];
     
-    self.shakeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_shake"]];
+    self.shakeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_shake"]];
     self.shakeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.shakeImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.shakeImageView.clipsToBounds = YES;
@@ -85,7 +92,7 @@
     
     self.shakeLabel = [[UILabel alloc] init];
     self.shakeLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    self.shakeLabel.text = @"晃一晃跳转";
+    self.shakeLabel.text = @"晃一晃或点击跳转";
     self.shakeLabel.font = [UIFont systemFontOfSize:17];
     self.shakeLabel.textColor = [UIColor secondarySystemGroupedBackgroundColor];
     [self.shakeView addSubview:self.shakeLabel];
@@ -94,6 +101,11 @@
     self.skipView.userInteractionEnabled = YES;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(skipTapped)];
     [self.skipView addGestureRecognizer:tap];
+
+    // 添加晃动标签点击手势
+    self.shakeView.userInteractionEnabled = YES;
+    UITapGestureRecognizer *shakeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(shakeTapped)];
+    [self.shakeView addGestureRecognizer:shakeTap];
     
     [self setupConstraints];
 }
@@ -112,7 +124,7 @@
         
         [self.adLogoContainerView.widthAnchor constraintEqualToConstant:43],
         [self.adLogoContainerView.heightAnchor constraintEqualToConstant:16],
-        [self.adLogoContainerView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-0],
+        [self.adLogoContainerView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-20],
         [self.adLogoContainerView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-16],
         
         [self.cornerImageView.leadingAnchor constraintEqualToAnchor:self.adLogoContainerView.leadingAnchor],
@@ -192,25 +204,53 @@
         [self.delegate splashViewDidSkip:self];
     }
 }
-- (BOOL)canBecomeFirstResponder {
-   return YES;
-}
 
+- (void)shakeTapped {
+    if ([self.delegate respondsToSelector:@selector(splashViewDidShake:)]) {
+        [self.delegate splashViewDidShake:self];
+    }
+}
 - (void)didMoveToWindow {
-   [super didMoveToWindow];
-   if (self.window) {
-       [self becomeFirstResponder];
-   } else {
-       [self resignFirstResponder];
-   }
+    [super didMoveToWindow];
+    if (self.window) {
+        [self startMotionDetection];
+    } else {
+        [self stopMotionDetection];
+    }
 }
 
-- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
-   if (motion == UIEventSubtypeMotionShake) {
-       // 通知控制器跳转，或者自己做事
-       if ([self.delegate respondsToSelector:@selector(splashViewDidShake:)]) {
-           [self.delegate splashViewDidShake:self];
-       }
-   }
+- (void)startMotionDetection {
+    if (!self.motionManager) {
+        self.motionManager = [[CMMotionManager alloc] init];
+    }
+    
+    if (self.motionManager.isAccelerometerAvailable) {
+        self.motionManager.accelerometerUpdateInterval = 0.1;
+        __weak typeof(self) weakSelf = self;
+        [self.motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMAccelerometerData * _Nullable accelerometerData, NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"CoreMotion Error: %@", error);
+                return;
+            }
+            
+            CMAcceleration acceleration = accelerometerData.acceleration;
+            double totalAcceleration = sqrt(acceleration.x * acceleration.x + acceleration.y * acceleration.y + acceleration.z * acceleration.z);
+            
+            if (totalAcceleration > SHAKE_THRESHOLD) {
+                [weakSelf handleShake];
+            }
+        }];
+    }
+}
+
+- (void)stopMotionDetection {
+    [self.motionManager stopAccelerometerUpdates];
+}
+
+- (void)handleShake {
+    [self stopMotionDetection]; // 防止重复触发
+    if ([self.delegate respondsToSelector:@selector(splashViewDidShake:)]) {
+        [self.delegate splashViewDidShake:self];
+    }
 }
 @end

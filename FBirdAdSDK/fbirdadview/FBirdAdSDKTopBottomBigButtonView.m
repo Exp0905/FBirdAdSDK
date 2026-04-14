@@ -51,7 +51,7 @@
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.cornerImageView];
     
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"]];
     self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:self.closeImageView];

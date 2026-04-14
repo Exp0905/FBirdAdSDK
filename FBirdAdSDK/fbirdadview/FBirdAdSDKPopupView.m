@@ -103,7 +103,7 @@
     ]];
     
     // 设置图标 (使用资源管理器)
-    _iconImageView.image = [FBirdAdSDKResourceManager imageNamed:@"cuskyadview_coins"];
+    _iconImageView.image = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_coins"];
 }
 - (void)backgroundTapped {
     [self dismiss];
@@ -150,12 +150,12 @@
     self.remainingSeconds = seconds;
     [self updateTitleLabel];
     
-    [self.countdownTimer invalidate];
-    self.countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                                                           target:self
-                                                         selector:@selector(countdownTick)
-                                                         userInfo:nil
-                                                          repeats:YES];
+//    [self.countdownTimer invalidate];
+//    self.countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+//                                                           target:self
+//                                                         selector:@selector(countdownTick)
+//                                                         userInfo:nil
+//                                                          repeats:YES];
 }
 
 - (void)countdownTick {

@@ -32,13 +32,13 @@
     [self.containerView addSubview:self.mainImageV];
     
     // close button image
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"]];
     self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.containerView addSubview:self.closeImageView];
     
     // ad tag
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.containerView addSubview:self.cornerImageView];

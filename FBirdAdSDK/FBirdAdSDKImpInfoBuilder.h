@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FBirdAdSDKImpInfoBuilder : NSObject
-+ (NSDictionary *)buildImpInfoWithTagID:(NSString *)tagid adtype:(FBirdAdType)adtype;
++ (NSDictionary *)buildImpInfoWithTagID:(NSString *)tagid adtype:(int)adtype;
 @end
 
 NS_ASSUME_NONNULL_END

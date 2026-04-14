@@ -26,13 +26,13 @@
     [self addSubview:self.mainImageV];
 
     // 关闭按钮图标
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"]];
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.closeImageView];
 
     // "广告" 标识
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.cornerImageView];

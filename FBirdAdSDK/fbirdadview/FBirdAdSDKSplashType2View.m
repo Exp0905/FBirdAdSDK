@@ -48,7 +48,7 @@
     self.bottomContainerView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:self.bottomContainerView];
 
-    self.arrowImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_draw_up"]];
+    self.arrowImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_draw_up"]];
     self.arrowImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.arrowImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.bottomContainerView addSubview:self.arrowImageView];
@@ -66,7 +66,7 @@
     self.centerNameL.font = [UIFont systemFontOfSize:15];
     self.centerNameL.textColor = [UIColor whiteColor];
     [self.bottomContainerView addSubview:self.centerNameL];
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.cornerImageView.clipsToBounds = YES;

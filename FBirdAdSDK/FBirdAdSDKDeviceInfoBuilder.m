@@ -353,6 +353,14 @@
     return [res uppercaseString];
 }
 
++(NSString *)md5WithUUIDAndTimeStampSign{
+    NSString *uuidstring =[[NSUUID UUID] UUIDString];
+    long long timestamp =(long long)([[NSDate date] timeIntervalSince1970] * 1000);
+    NSString *timestampString = [NSString stringWithFormat:@"%lld", timestamp];
+    NSString *combinedstring = [NSString stringWithFormat:@"%@%@", uuidstring, timestampString];
+ return [self md5Hash: combinedstring];
+}
+
 + (NSInteger)networkConnectionType {
 //    SCNetworkReachabilityRef reach = SCNetworkReachabilityCreateWithName(NULL, "www.apple.com");
 //    SCNetworkReachabilityFlags flags = 0;

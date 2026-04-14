@@ -1,0 +1,29 @@
+# 排除源码目录
+/FBirdAdSDK/
+
+# 排除构建目录
+/build/
+
+/Archives/
+/Resources/
+/Media.xcassets/
+
+server.key
+
+# 排除 Xcode 生成文件
+*.xcuserstate
+project.xcworkspace
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace

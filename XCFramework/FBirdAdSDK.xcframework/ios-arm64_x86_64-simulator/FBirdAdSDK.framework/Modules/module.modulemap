@@ -1,0 +1,6 @@
+framework module FBirdAdSDK {
+  umbrella header "FBirdAdSDK.h"
+  export *
+
+  module * { export * }
+}

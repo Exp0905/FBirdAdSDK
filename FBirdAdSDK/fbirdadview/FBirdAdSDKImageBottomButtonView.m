@@ -46,14 +46,14 @@
     [self.actionButton setTitle:@"立即查看" forState:UIControlStateNormal];
     [self.actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.actionButton.titleLabel.font = [UIFont systemFontOfSize:18];
-    UIImage *buttonImage = [FBirdAdSDKResourceManager imageNamed:@"cuskyadview_button"];
+    UIImage *buttonImage = [FBirdAdSDKResourceManager imageNamed:@"fbirdadview_button"];
     [self.actionButton setBackgroundImage:buttonImage forState:UIControlStateNormal];
     self.actionButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
     self.actionButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.bottomContainerView addSubview:self.actionButton];
 
     // cornerImageView (ghm-Rq-hPl)
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.cornerImageView.clipsToBounds = YES;
     self.cornerImageView.userInteractionEnabled = NO;
@@ -61,7 +61,7 @@
     [self.containerView addSubview:self.cornerImageView];
 
     // closeImageView (m3d-Fi-fSv)
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"]];
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.closeImageView.clipsToBounds = YES;
     self.closeImageView.userInteractionEnabled = NO;

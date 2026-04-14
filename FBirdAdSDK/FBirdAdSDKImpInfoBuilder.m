@@ -9,7 +9,7 @@
 
 @implementation FBirdAdSDKImpInfoBuilder
 
-+ (NSDictionary *)buildImpInfoWithTagID:(NSString *)tagid adtype:(FBirdAdType)type {
++ (NSDictionary *)buildImpInfoWithTagID:(NSString *)tagid adtype:(int)type {
     NSString *impID = [[NSUUID UUID] UUIDString];
     NSMutableArray *assets = [NSMutableArray array];
     NSInteger nativeLayout = 501;

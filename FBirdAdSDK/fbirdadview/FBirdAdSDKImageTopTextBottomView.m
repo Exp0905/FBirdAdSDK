@@ -76,7 +76,7 @@
     self.mainImageV.contentMode = UIViewContentModeScaleAspectFit;
     [self.contentView addSubview:self.mainImageV];
     
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"]];
     self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.contentView addSubview:self.closeImageView];

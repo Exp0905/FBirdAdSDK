@@ -44,7 +44,7 @@
     [self.cardView addSubview:self.adTagContainer];
     
     // 广告标识图
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.adTagContainer addSubview:self.cornerImageView];
@@ -84,26 +84,30 @@
     self.gradientLayer.startPoint = CGPointMake(0, 0.5);
     self.gradientLayer.endPoint = CGPointMake(1, 0.5);
     self.gradientLayer.cornerRadius = self.actionButton.layer.cornerRadius;
-    self.gradientLayer.frame = CGRectMake(0, 0, self.frame.size.width - 70, 40);
     [self.actionButton.layer insertSublayer:self.gradientLayer atIndex:0];
     // 关闭按钮图片
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_back_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_back_close"]];
     self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.cardView addSubview:self.closeImageView];
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.gradientLayer.frame = self.actionButton.bounds;
+}
+
 - (void)setupConstraints {
     [NSLayoutConstraint activateConstraints:@[
         // 卡片布局
-        [self.cardView.topAnchor constraintEqualToAnchor:self.topAnchor constant:55],
-        [self.cardView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:25],
-        [self.cardView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-25],
-        [self.cardView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-25],
+        [self.cardView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
+        [self.cardView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
+        [self.cardView.widthAnchor constraintEqualToAnchor:self.widthAnchor multiplier:0.8],
+        [self.cardView.heightAnchor constraintEqualToAnchor:self.heightAnchor multiplier:0.5],
 
         // 顶部图标
         [self.adLogoImageV.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
-        [self.adLogoImageV.topAnchor constraintEqualToAnchor:self.cardView.topAnchor constant:-30],
+        [self.adLogoImageV.bottomAnchor constraintEqualToAnchor:self.cardView.topAnchor constant:30],
         [self.adLogoImageV.widthAnchor constraintEqualToConstant:60],
         [self.adLogoImageV.heightAnchor constraintEqualToConstant:60],
 
@@ -118,13 +122,14 @@
         [self.centerNameL.centerXAnchor constraintEqualToAnchor:self.cardView.centerXAnchor],
 
         // 副标题
-        [self.centerDetailL.topAnchor constraintEqualToAnchor:self.centerNameL.bottomAnchor constant:15],
+        [self.centerDetailL.topAnchor constraintEqualToAnchor:self.centerNameL.bottomAnchor constant:10],
         [self.centerDetailL.centerXAnchor constraintEqualToAnchor:self.cardView.centerXAnchor],
 
         // 主图
-        [self.mainImageV.topAnchor constraintEqualToAnchor:self.centerDetailL.bottomAnchor constant:25],
+        [self.mainImageV.topAnchor constraintEqualToAnchor:self.centerDetailL.bottomAnchor constant:15],
         [self.mainImageV.leadingAnchor constraintEqualToAnchor:self.cardView.leadingAnchor constant:8],
         [self.mainImageV.trailingAnchor constraintEqualToAnchor:self.cardView.trailingAnchor constant:-8],
+        [self.mainImageV.heightAnchor constraintLessThanOrEqualToAnchor:self.cardView.heightAnchor multiplier:0.4],
 
         // 广告标
         [self.adTagContainer.topAnchor constraintEqualToAnchor:self.mainImageV.topAnchor constant:5],
@@ -138,9 +143,9 @@
         [self.cornerImageView.trailingAnchor constraintEqualToAnchor:self.adTagContainer.trailingAnchor],
 
         // 下载按钮
-        [self.actionButton.topAnchor constraintEqualToAnchor:self.mainImageV.bottomAnchor constant:25],
-        [self.actionButton.leadingAnchor constraintEqualToAnchor:self.cardView.leadingAnchor constant:10],
-        [self.actionButton.trailingAnchor constraintEqualToAnchor:self.cardView.trailingAnchor constant:-10],
+        [self.actionButton.topAnchor constraintEqualToAnchor:self.mainImageV.bottomAnchor constant:15],
+        [self.actionButton.leadingAnchor constraintEqualToAnchor:self.cardView.leadingAnchor constant:20],
+        [self.actionButton.trailingAnchor constraintEqualToAnchor:self.cardView.trailingAnchor constant:-20],
         [self.actionButton.heightAnchor constraintEqualToConstant:40],
         [self.actionButton.bottomAnchor constraintEqualToAnchor:self.cardView.bottomAnchor constant:-20],
     ]];

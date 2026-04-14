@@ -54,12 +54,12 @@
     self.actionButton.backgroundColor = [UIColor systemGreenColor];
     [self.cardView addSubview:self.actionButton];
 
-    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_ad"]];
+    self.cornerImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_ad"]];
     self.cornerImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cornerImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:self.cornerImageView];
     
-    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"cuskyadview_close"]];
+    self.closeImageView = [[UIImageView alloc] initWithImage:[FBirdAdSDKResourceManager imageNamed:@"fbirdadview_close"]];
     self.closeImageView.translatesAutoresizingMaskIntoConstraints = NO;
     self.closeImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:self.closeImageView];
