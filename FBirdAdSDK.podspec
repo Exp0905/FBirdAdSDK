@@ -10,9 +10,12 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '12.0'
   s.frameworks       = 'UIKit', 'AVFoundation', 'CoreTelephony'
   
-  # 使用二进制 XCFramework
+  # 引用二进制框架
   s.vendored_frameworks = 'XCFramework/FBirdAdSDK.xcframework'
   
   # 包含资源文件
   s.resources = 'XCFramework/Resources/FBirdAdSDKBundle.bundle'
+  
+  # 添加 Lottie 依赖
+  s.dependency 'lottie-ios', '~> 4.4.0'
 end
