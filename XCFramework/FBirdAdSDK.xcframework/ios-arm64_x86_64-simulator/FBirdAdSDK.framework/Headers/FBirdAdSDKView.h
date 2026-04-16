@@ -87,6 +87,8 @@ typedef void(^FBirdAdUserActionCallback)(FBirdAdUserActionType actionType);
 - (void)showToView:(UIView *)containerView;
 /// 关闭当前广告视图，从父视图中移除
 - (void)closeAdView;
+/// 处理摇一摇事件
+- (void)handleShakeEvent;
 //自渲染点击事件
 - (void)registerClickableViews:(NSArray<UIView *> *)views;
 @end
