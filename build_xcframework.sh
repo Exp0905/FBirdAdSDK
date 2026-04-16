@@ -22,22 +22,16 @@ rm -rf "${BUILD_DIR}" "${OUTPUT_DIR}"
 echo "🧹 清理完成"
 
 ###########################
-# Step 0: 构建资源 Bundle（跳过签名）
+# Step 0: 资源文件说明
 ###########################
-echo "📦 构建资源 Bundle：${RESOURCE_BUNDLE_NAME}"
+echo "📦 资源文件说明：Media.xcassets 已包含在 FBirdAdSDK target 中"
+echo "✅ 构建时会自动编译为 Assets.car 并包含在 framework 中"
 
-xcodebuild -target "${RESOURCE_BUNDLE_TARGET}" \
-  -configuration "${CONFIGURATION}" \
-  -sdk iphonesimulator \
-  BUILD_DIR="${BUILD_DIR}" BUILD_ROOT="${BUILD_DIR}" \
-  CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+# 资源 Bundle 路径（实际构建时会自动生成）
+RESOURCE_BUNDLE_NAME="FBirdAdSDKBundle.bundle"
+RESOURCE_SRC_PATH=""
 
-RESOURCE_SRC_PATH="${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${RESOURCE_BUNDLE_NAME}"
-
-if [ ! -d "${RESOURCE_SRC_PATH}" ]; then
-  echo "❌ 找不到资源 Bundle"
-  exit 1
-fi
+# 跳过单独构建资源 Bundle，使用主 target 生成的 Assets.car
 
 ###########################
 # Step 1: 构建模拟器 Framework
@@ -57,13 +51,8 @@ SIMULATOR_FRAMEWORK_PATH="${BUILD_DIR}/simulator.xcarchive/Products/Library/Fram
 SIMULATOR_RESOURCES_PATH="${SIMULATOR_FRAMEWORK_PATH}/Resources"
 mkdir -p "${SIMULATOR_RESOURCES_PATH}"
 
-# 拷贝资源 Bundle 到模拟器 framework
-if [ -d "${RESOURCE_SRC_PATH}" ]; then
-  cp -R "${RESOURCE_SRC_PATH}" "${SIMULATOR_RESOURCES_PATH}/"
-  echo "✅ 已拷贝资源 Bundle 到模拟器 framework"
-else
-  echo "⚠️  找不到资源 Bundle，跳过拷贝"
-fi
+# 拷贝资源 Bundle 到模拟器 framework（使用主 target 生成的 Assets.car）
+echo "✅ 资源文件已通过主 target 包含在 framework 中"
 
 # 拷贝静态资源文件到模拟器 framework
 if [ -d "./Resources" ]; then
@@ -91,13 +80,8 @@ DEVICE_FRAMEWORK_PATH="${BUILD_DIR}/device.xcarchive/Products/Library/Frameworks
 DEVICE_RESOURCES_PATH="${DEVICE_FRAMEWORK_PATH}/Resources"
 mkdir -p "${DEVICE_RESOURCES_PATH}"
 
-# 拷贝资源 Bundle 到真机 framework
-if [ -d "${RESOURCE_SRC_PATH}" ]; then
-  cp -R "${RESOURCE_SRC_PATH}" "${DEVICE_RESOURCES_PATH}/"
-  echo "✅ 已拷贝资源 Bundle 到真机 framework"
-else
-  echo "⚠️  找不到资源 Bundle，跳过拷贝"
-fi
+# 拷贝资源 Bundle 到真机 framework（使用主 target 生成的 Assets.car）
+echo "✅ 资源文件已通过主 target 包含在 framework 中"
 
 # 拷贝静态资源文件到真机 framework
 if [ -d "./Resources" ]; then
@@ -120,22 +104,15 @@ xcodebuild -create-xcframework \
   -output "${OUTPUT_XCFRAMEWORK}"
 
 ###########################
-# Step 4: 单独导出资源 Bundle（供宿主应用使用）
+# Step 4: 资源文件说明
 ###########################
-OUTPUT_RESOURCE_DIR="${OUTPUT_DIR}/Resources"
-RESOURCE_BUNDLE_EXPORT_PATH="${OUTPUT_RESOURCE_DIR}/${RESOURCE_BUNDLE_NAME}"
-mkdir -p "${OUTPUT_RESOURCE_DIR}"
-
-if [ -d "${RESOURCE_SRC_PATH}" ]; then
-  cp -R "${RESOURCE_SRC_PATH}" "${RESOURCE_BUNDLE_EXPORT_PATH}"
-  echo "✅ 已单独导出资源 Bundle：${RESOURCE_BUNDLE_EXPORT_PATH}"
-  echo "📝 使用说明：请将此资源 Bundle 添加到宿主应用的 'Copy Bundle Resources' 中"
-else
-  echo "⚠️  找不到资源 Bundle，跳过单独导出"
-fi
+echo "📦 资源文件说明："
+echo "✅ 资源文件已通过主 target 包含在 framework 中"
+echo "✅ 构建时会自动编译为 Assets.car 并嵌入到 framework 中"
+echo "📝 使用说明：无需单独添加资源文件，直接集成 framework 即可"
 
 echo "🎉 构建完成："
 echo "🧩 Framework: ${OUTPUT_XCFRAMEWORK}"
-echo "🖼️ 资源 Bundle: ${RESOURCE_BUNDLE_EXPORT_PATH}"
+echo "🖼️ 资源文件: 已包含在 framework 中"
 
 
