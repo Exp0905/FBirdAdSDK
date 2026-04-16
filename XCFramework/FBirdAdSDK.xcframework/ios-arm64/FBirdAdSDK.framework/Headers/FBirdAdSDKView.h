@@ -38,7 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSArray<NSString *> *impUrls;         // 曝光跟踪URL
 @property (nonatomic, strong) NSArray<NSString *> *clickUrls;       // 点击跟踪URL
 @property (nonatomic, strong) NSArray<NSString *> *deeplinkUrls;    // Deeplink URL
-
+@property (nonatomic, assign) double *sws;
+@property (nonatomic, assign) double *swc;
+@property (nonatomic, assign) double *swu;
+@property (nonatomic, assign) double *swf;
 - (NSDictionary *)toDictionary; // Add this method declaration
 @end
 
@@ -57,7 +60,15 @@ FOUNDATION_EXPORT FBirdAdUserActionType const FBirdAdUserActionTypeOnAdShow; ///
 /// 广告用户行为回调（如关闭、跳过、退出等）
 typedef void(^FBirdAdUserActionCallback)(FBirdAdUserActionType actionType);
 
+// 前向声明
+@class FBirdAdSDKView;
+
+@protocol FBirdAdSDKViewDelegate <NSObject>
+- (void)adViewDidShake:(FBirdAdSDKView *)adView;
+@end
+
 @interface FBirdAdSDKView : UIView
+@property (nonatomic, weak) id<FBirdAdSDKViewDelegate> delegate;
 @property (nonatomic, strong) UILabel *topTitle; // 标题素材
 @property (nonatomic, strong) UILabel *centerNameL; // 来源素材
 @property (nonatomic, strong) UILabel *centerDetailL; // 描述素材
@@ -70,7 +81,7 @@ typedef void(^FBirdAdUserActionCallback)(FBirdAdUserActionType actionType);
 /// 广告用户行为事件回调属性
 @property (nonatomic, copy) FBirdAdUserActionCallback userActionCallback;
 // 初始化方法
-- (instancetype)initWithFrame:(CGRect)frame adtype:(int)adType;
+- (instancetype)initWithFrame:(CGRect)frame adtype:(int)adtype sensitivity:(double)sensitivity;
 // 配置视图内容
 - (void)configureWithBid:(FBirdAdSDKBid *)bid;
 - (void)showToView:(UIView *)containerView;
