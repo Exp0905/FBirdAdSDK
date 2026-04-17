@@ -38,10 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSArray<NSString *> *impUrls;         // 曝光跟踪URL
 @property (nonatomic, strong) NSArray<NSString *> *clickUrls;       // 点击跟踪URL
 @property (nonatomic, strong) NSArray<NSString *> *deeplinkUrls;    // Deeplink URL
-@property (nonatomic, assign) double *sws;
-@property (nonatomic, assign) double *swc;
-@property (nonatomic, assign) double *swu;
-@property (nonatomic, assign) double *swf;
 - (NSDictionary *)toDictionary; // Add this method declaration
 @end
 
