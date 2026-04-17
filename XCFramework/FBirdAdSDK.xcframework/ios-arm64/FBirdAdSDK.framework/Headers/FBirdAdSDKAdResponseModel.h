@@ -75,10 +75,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *adid;
 @property (nonatomic, copy) NSString *nurl;
 @property (nonatomic, strong) FBirdAdSDKTrackingEvents *events;
-@property (nonatomic, assign) double *sws;
-@property (nonatomic, assign) double *swc;
-@property (nonatomic, assign) double *swu;
-@property (nonatomic, assign) double *swf;
+@property (nonatomic, assign) double sws;
+@property (nonatomic, assign) double swc;
+@property (nonatomic, assign) double swu;
+@property (nonatomic, assign) double swf;
 @end
 
 #pragma mark - 席位竞价
