@@ -88,5 +88,4 @@ typedef void(^FBirdAdUserActionCallback)(FBirdAdUserActionType actionType);
 //自渲染点击事件
 - (void)registerClickableViews:(NSArray<UIView *> *)views;
 @end
-
 NS_ASSUME_NONNULL_END
