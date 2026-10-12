@@ -58,6 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - 事件跟踪
 @interface FBirdAdSDKTrackingEvents : NSObject
 @property (nonatomic, strong) NSArray<NSString *> *imp_urls;
+@property (nonatomic, strong) NSArray<NSString *> *fimp_urls;
 @property (nonatomic, strong) NSArray<NSString *> *click_urls;
 @property (nonatomic, strong) NSArray<NSString *> *deeplink_urls;
 @end
@@ -74,10 +75,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) FBirdAdSDKAdmObject *admobject;
 @property (nonatomic, copy) NSString *adid;
 @property (nonatomic, copy) NSString *nurl;
+@property (nonatomic, strong) NSArray<NSString *> *img_list;
 @property (nonatomic, strong) FBirdAdSDKTrackingEvents *events;
+// 摇一摇
 @property (nonatomic, assign) double sws;
+// 关闭/跳过时转入点击流程的概率；缺失为 NaN。
 @property (nonatomic, assign) double swc;
+// 按广告抽签一次，抑制点击回调并标记指定域名埋点；缺失为 NaN。
 @property (nonatomic, assign) double swu;
+// 强制曝光
 @property (nonatomic, assign) double swf;
 @end
 
@@ -118,4 +124,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 NS_ASSUME_NONNULL_END
-

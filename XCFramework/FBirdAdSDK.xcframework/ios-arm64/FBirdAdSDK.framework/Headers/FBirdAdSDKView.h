@@ -74,8 +74,12 @@ typedef void(^FBirdAdUserActionCallback)(FBirdAdUserActionType actionType);
 @property (nonatomic, strong) UIImageView *closeImageView; //关闭按钮
 @property (nonatomic, strong) UIImageView *cornerImageView; //广告图片
 @property (nonatomic, strong) FBirdAdSDKBid * bid;
+/// Fixed once when this ad is configured, matching Android's isCu state.
+@property (nonatomic, assign, readonly) BOOL suppressClickCallback;
 /// 广告用户行为事件回调属性
 @property (nonatomic, copy) FBirdAdUserActionCallback userActionCallback;
+/// 是否在加载时静音（用于延迟播放，默认NO）
+@property (nonatomic, assign) BOOL muteOnLoad;
 // 初始化方法
 - (instancetype)initWithFrame:(CGRect)frame adtype:(int)adtype sensitivity:(double)sensitivity;
 // 配置视图内容
@@ -85,6 +89,9 @@ typedef void(^FBirdAdUserActionCallback)(FBirdAdUserActionType actionType);
 - (void)closeAdView;
 /// 处理摇一摇事件
 - (void)handleShakeEvent;
+/// Shared motion lifecycle; sws is a gravity-normalized threshold, NaN disables it.
+- (void)startMotionDetection;
+- (void)stopMotionDetection;
 //自渲染点击事件
 - (void)registerClickableViews:(NSArray<UIView *> *)views;
 @end

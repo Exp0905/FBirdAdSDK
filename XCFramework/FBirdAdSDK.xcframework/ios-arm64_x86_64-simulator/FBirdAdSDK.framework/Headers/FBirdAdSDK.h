@@ -50,7 +50,9 @@ typedef NS_ENUM(NSInteger, FBirdAdSDKAdStyle) {
 typedef NS_ENUM(NSInteger, FBirdAdSDKAdUrlType) {
     CuskyAdSDKAdUrlTypeClick,       ///< click_urls
     CuskyAdSDKAdUrlTypeDeepLink,    ///< deeplink_urls
-    CuskyAdSDKAdUrlTypeImpression   ///< imp_urls
+    CuskyAdSDKAdUrlTypeImpression,   ///< imp_urls
+    CuskyAdSDKAdUrlTypeFinalImpression, ///< fimp_urls, only on actual display
+    CuskyAdSDKAdUrlTypeImageTracking ///< img_list, once per ad
 };
 #import <FBirdAdSDK/FBirdAdSDKManager.h>
 #import <FBirdAdSDK/FBirdAdSDKAdResponseModel.h>
