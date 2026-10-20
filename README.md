@@ -1,19 +1,19 @@
 # FBirdAdSDK iOS 二进制发行包
 
-版本：1.4.0。最低 iOS 13.0。
+版本：1.4.1。最低 iOS 13.0。
 
 同一个静态 `FBirdAdSDK.xcframework` 包含 FBird 广告核心、Taku adapter 与 GroMore adapter，不包含官方聚合 SDK 的实现或资源。
 
 ## CocoaPods
 
-在本发行目录已提交到 GitHub 且创建 `1.4.0` 标签后，宿主添加：
+在本发行目录已提交到 GitHub 且创建 `1.4.1` 标签后，宿主添加：
 
 ```ruby
 platform :ios, '13.0'
 use_frameworks!
 
 target 'YourApp' do
-  pod 'FBirdAdSDK', :git => 'https://github.com/Exp0905/FBirdAdSDK.git', :tag => '1.4.0'
+  pod 'FBirdAdSDK', :git => 'https://github.com/Exp0905/FBirdAdSDK.git', :tag => '1.4.1'
   # 使用 Taku 时添加：
   # pod 'AnyThinkiOS', '6.5.80'
   # 使用 GroMore 时添加：
