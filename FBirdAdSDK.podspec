@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'FBirdAdSDK'
-  s.version          = '1.4.1'
+  s.version          = '1.4.2'
   s.summary          = 'FBirdAdSDK 是一个广告集成 SDK'
   s.description      = 'FBirdAdSDK 提供开屏、插屏、信息流和激励视频广告能力，并内置 Taku / GroMore 聚合 adapter。'
   s.homepage         = 'https://sdk.dmpdsp.com/'
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Your Name' => 'wjl@dmpdsp.com' }
   s.source           = { :git => 'https://github.com/Exp0905/FBirdAdSDK.git', :tag => s.version.to_s }
   s.ios.deployment_target = '13.0'
-  s.frameworks       = 'UIKit', 'AVFoundation', 'CoreTelephony', 'CoreMotion'
+  s.frameworks       = 'UIKit', 'AVFoundation', 'CoreTelephony', 'CoreMotion', 'SystemConfiguration'
 
   s.vendored_frameworks = 'XCFramework/FBirdAdSDK.xcframework'
   # Permit only the weak imports used by the optional mediation adapters.
@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
     _kATSplashExtraContainerViewKey
     _kATSplashExtraWindowKey
     _BUMAdLoadingParamNALoadAdCount
+    _BUMAdLoadingParamExpressAdType
     _BUMCustomAdapterVersion1_1
     _BUMMediaAdLoadingExtECPM
     _BUMMediatedAdStatusUnknown
