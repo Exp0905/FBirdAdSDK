@@ -1,21 +1,28 @@
 # FBirdAdSDK iOS 二进制发行包
 
-版本：1.4.2。最低 iOS 13.0。
+版本：1.4.3。最低 iOS 13.0。
 
-1.4.2 构建说明：使用 Xcode 15.4 编译。真机 arm64 最低 iOS 13.0；模拟器 x86_64 最低 iOS 13.0，模拟器 arm64 最低 iOS 14.0。Demo 最低 iOS 15。旧系统真机上的广告加载、展示和统计仍需联调验证。
+1.4.3 构建说明：使用 Xcode 15.4 编译。真机 arm64 最低 iOS 13.0；模拟器 x86_64 最低 iOS 13.0，模拟器 arm64 最低 iOS 14.0。Demo 最低 iOS 15。旧系统真机上的广告加载、展示和统计仍需联调验证。
 
 同一个静态 `FBirdAdSDK.xcframework` 包含 FBird 广告核心、Taku adapter 与 GroMore adapter，不包含官方聚合 SDK 的实现或资源。
 
+## 1.4.3 激励视频修复
+
+- 预加载只准备素材，实际展示后按播放进度累计奖励时间；暂停、退后台不计时。
+- 提前退出或播放失败不发有效奖励，达标后只回调一次。
+- 领奖后停止视频并展示素材大图（无大图时使用封面），广告由用户主动关闭。
+- GroMore / Taku 奖励桥接增加展示、关闭及失败状态校验。
+
 ## CocoaPods
 
-在本发行目录已提交到 GitHub 且创建 `1.4.2` 标签后，宿主添加：
+在本发行目录已提交到 GitHub 且创建 `1.4.3` 标签后，宿主添加：
 
 ```ruby
 platform :ios, '13.0'
 use_frameworks!
 
 target 'YourApp' do
-  pod 'FBirdAdSDK', :git => 'https://github.com/Exp0905/FBirdAdSDK.git', :tag => '1.4.2'
+  pod 'FBirdAdSDK', :git => 'https://github.com/Exp0905/FBirdAdSDK.git', :tag => '1.4.3'
   # 使用 Taku 时添加：
   # pod 'AnyThinkiOS', '6.6.20'
   # 使用 GroMore 时添加：

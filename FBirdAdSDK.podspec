@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'FBirdAdSDK'
-  s.version          = '1.4.2'
+  s.version          = '1.4.3'
   s.summary          = 'FBirdAdSDK 是一个广告集成 SDK'
   s.description      = 'FBirdAdSDK 提供开屏、插屏、信息流和激励视频广告能力，并内置 Taku / GroMore 聚合 adapter。'
   s.homepage         = 'https://sdk.dmpdsp.com/'

@@ -51,6 +51,7 @@ FOUNDATION_EXPORT FBirdAdUserActionType const FBirdAdUserActionTypeShake;       
 FOUNDATION_EXPORT FBirdAdUserActionType const FBirdAdUserActionTypeClickDetail; ///< 用户点击详情
 FOUNDATION_EXPORT FBirdAdUserActionType const FBirdAdUserActionTypeOnAdReward; ///< 奖励发放
 FOUNDATION_EXPORT FBirdAdUserActionType const FBirdAdUserActionTypeOnAdShow; ///< 广告展示
+FOUNDATION_EXPORT FBirdAdUserActionType const FBirdAdUserActionTypeOnAdPlayFailed; ///< 激励播放失败（不发奖励）
 
 
 /// 广告用户行为回调（如关闭、跳过、退出等）
@@ -78,7 +79,7 @@ typedef void(^FBirdAdUserActionCallback)(FBirdAdUserActionType actionType);
 @property (nonatomic, assign, readonly) BOOL suppressClickCallback;
 /// 广告用户行为事件回调属性
 @property (nonatomic, copy) FBirdAdUserActionCallback userActionCallback;
-/// 是否在加载时静音（用于延迟播放，默认NO）
+/// 是否在加载时静音（默认NO；激励视频始终延迟到展示后播放）
 @property (nonatomic, assign) BOOL muteOnLoad;
 // 初始化方法
 - (instancetype)initWithFrame:(CGRect)frame adtype:(int)adtype sensitivity:(double)sensitivity;
